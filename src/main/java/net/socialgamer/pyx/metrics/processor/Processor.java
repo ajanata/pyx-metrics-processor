@@ -30,14 +30,14 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Properties;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Stage;
+
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import net.socialgamer.pyx.metrics.inject.ProcessorModule;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Stage;
 
 
 public class Processor {

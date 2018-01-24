@@ -36,16 +36,21 @@ import net.socialgamer.pyx.metrics.data.GameStart;
 import net.socialgamer.pyx.metrics.data.GameStart.DeckInfo;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 
 public class GameStartHandler implements EventHandler {
 
+  private static final Logger LOG = Logger.getLogger(GameStartHandler.class);
+
+  private final boolean includeCustomCards;
   private final PreparedStatement getDeckStmt;
   private final PreparedStatement makeDeckStmt;
   private final PreparedStatement gameStmt;
   private final PreparedStatement gameDeckStmt;
 
-  public GameStartHandler(final Connection connection) throws SQLException {
+  public GameStartHandler(final Connection connection, final boolean includeCustomCards)
+      throws SQLException {
     gameStmt = connection.prepareStatement("INSERT INTO game_start"
         + " (game_id, blanks_in_deck, max_players, score_goal, has_password, meta)"
         + " VALUES (?, ?, ?, ?, ?, ROW(?, ?))"
@@ -60,6 +65,7 @@ public class GameStartHandler implements EventHandler {
         + " (game_id, deck_uid)"
         + " VALUES (?, ?)"
         + " ON CONFLICT DO NOTHING");
+    this.includeCustomCards = includeCustomCards;
   }
 
   @Override
@@ -98,6 +104,11 @@ public class GameStartHandler implements EventHandler {
     final Set<Long> deckUids = new HashSet<>();
     // see if decks exist and create if they don't
     for (final DeckInfo deck : data.getDecks()) {
+      if (!includeCustomCards && deck.isCustom()) {
+        LOG.debug(String.format("Skipping custom deck %s for game %s", deck.getName(),
+            data.getGameId()));
+        continue;
+      }
       long currUid = getDeckUid(deck);
       if (-1 == currUid) {
         // add deck, get ID again
@@ -116,6 +127,10 @@ public class GameStartHandler implements EventHandler {
         }
       }
       deckUids.add(currUid);
+    }
+    if (deckUids.isEmpty()) {
+      LOG.debug(String.format("Game %s contains only custom decks, skipping.", data.getGameId()));
+      return;
     }
 
     // store the game itself

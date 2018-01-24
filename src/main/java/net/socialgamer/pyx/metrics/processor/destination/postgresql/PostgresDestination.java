@@ -29,6 +29,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.log4j.Logger;
+
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+
 import net.socialgamer.pyx.metrics.data.Event;
 import net.socialgamer.pyx.metrics.data.EventData;
 import net.socialgamer.pyx.metrics.data.GameStart;
@@ -39,22 +44,21 @@ import net.socialgamer.pyx.metrics.data.UserDisconnect;
 import net.socialgamer.pyx.metrics.inject.ProcessorModule.JdbcConnectionProvider;
 import net.socialgamer.pyx.metrics.processor.destination.Destination;
 
-import org.apache.log4j.Logger;
-
-import com.google.inject.Inject;
-
 
 public class PostgresDestination implements Destination {
 
   private static final Logger LOG = Logger.getLogger(PostgresDestination.class);
 
   private final JdbcConnectionProvider<Connection> connectionProvider;
+  private final boolean includeCustomCards;
   private Connection connection;
   private final Map<Class<? extends EventData>, EventHandler> handlers = new HashMap<>();
 
   @Inject
-  public PostgresDestination(final JdbcConnectionProvider<Connection> connectionProvider) {
+  public PostgresDestination(final JdbcConnectionProvider<Connection> connectionProvider,
+      @Named("postgres.include_custom_cards") final String includeCustomCards) {
     this.connectionProvider = connectionProvider;
+    this.includeCustomCards = Boolean.valueOf(includeCustomCards);
   }
 
   private synchronized void ensureConnection() {
@@ -113,8 +117,8 @@ public class PostgresDestination implements Destination {
     handlers.put(ServerStart.class, new ServerStartHandler(connection));
     handlers.put(UserDisconnect.class, new UserDisconnectHandler(connection));
     handlers.put(UserConnect.class, new UserConnectHandler(connection));
-    handlers.put(GameStart.class, new GameStartHandler(connection));
-    handlers.put(RoundComplete.class, new RoundCompleteHandler(connection));
+    handlers.put(GameStart.class, new GameStartHandler(connection, includeCustomCards));
+    handlers.put(RoundComplete.class, new RoundCompleteHandler(connection, includeCustomCards));
   }
 
   private synchronized void closeExistingHandlers() {

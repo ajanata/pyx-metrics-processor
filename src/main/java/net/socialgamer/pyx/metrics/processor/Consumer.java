@@ -42,6 +42,8 @@ import com.google.inject.name.Named;
 
 public class Consumer implements Runnable {
 
+  private static final int CONSECUTIVE_NO_DATA_LOG_COUNT = 60;
+
   private static final Logger LOG = Logger.getLogger(Consumer.class);
 
   private final Provider<KafkaConsumer<String, String>> consumerProvider;
@@ -112,9 +114,9 @@ public class Consumer implements Runnable {
       cumulativeTotal += records.count();
       if (records.isEmpty()) {
         consecutiveNoData++;
-        if (60 == consecutiveNoData) {
+        if (CONSECUTIVE_NO_DATA_LOG_COUNT == consecutiveNoData) {
           // only log this once
-          LOG.info("No data in last 60 polls.");
+          LOG.info("No data in last " + CONSECUTIVE_NO_DATA_LOG_COUNT + " polls.");
         }
       } else {
         consecutiveNoData = 0;

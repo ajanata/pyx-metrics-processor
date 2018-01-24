@@ -38,10 +38,14 @@ import net.socialgamer.pyx.metrics.data.RoundComplete.BlackCardInfo;
 import net.socialgamer.pyx.metrics.data.RoundComplete.WhiteCardInfo;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 
 public class RoundCompleteHandler implements EventHandler {
 
+  private static final Logger LOG = Logger.getLogger(RoundCompleteHandler.class);
+
+  private final boolean includeCustomCards;
   private final PreparedStatement getBlackStmt;
   private final PreparedStatement makeBlackStmt;
   private final PreparedStatement getWhiteStmt;
@@ -50,7 +54,8 @@ public class RoundCompleteHandler implements EventHandler {
   private final PreparedStatement makeRoundStmt;
   private final PreparedStatement joinStmt;
 
-  public RoundCompleteHandler(final Connection connection) throws SQLException {
+  public RoundCompleteHandler(final Connection connection, final boolean includeCustomCards)
+      throws SQLException {
     getBlackStmt = connection.prepareStatement("SELECT uid FROM black_card"
         + " WHERE text = ? AND is_custom = ? AND watermark = ? AND draw = ? AND pick = ?");
     makeBlackStmt = connection.prepareStatement("INSERT INTO black_card"
@@ -75,6 +80,7 @@ public class RoundCompleteHandler implements EventHandler {
         + " (round_complete_uid, session_id, white_card_uid, white_card_index)"
         + " VALUES (?, ?, ?, ?)"
         + " ON CONFLICT DO NOTHING");
+    this.includeCustomCards = includeCustomCards;
   }
 
   @Override
@@ -219,11 +225,12 @@ public class RoundCompleteHandler implements EventHandler {
    * Gets existing round or inserts into database
    * @param event Event object
    * @param blackUid UID of black card for the round
+   * @param hasAnyCustomCards If any of the cards involved in the round are custom cards
    * @return The UID of the round, whether or not it already existed or was just inserted
    * @throws SQLException If the query has a problem
    */
-  private long getOrMakeRound(final Event event, final long blackUid, final boolean hasAnyNonStock)
-      throws SQLException {
+  private long getOrMakeRound(final Event event, final long blackUid,
+      final boolean hasAnyCustomCards) throws SQLException {
     long currUid = getRound(event, blackUid);
     if (-1 == currUid) {
       final RoundComplete data = (RoundComplete) event.getData();
@@ -233,7 +240,7 @@ public class RoundCompleteHandler implements EventHandler {
       makeRoundStmt.setString(3, StringUtils.left(data.getJudgeSessionId(), 100));
       makeRoundStmt.setString(4, StringUtils.left(data.getWinnerSessionId(), 100));
       makeRoundStmt.setLong(5, blackUid);
-      makeRoundStmt.setBoolean(6, hasAnyNonStock);
+      makeRoundStmt.setBoolean(6, hasAnyCustomCards);
       makeRoundStmt.setTimestamp(7, new Timestamp(event.getTimestamp()));
       makeRoundStmt.setString(8, StringUtils.left(event.getBuild(), 100));
       makeRoundStmt.executeUpdate();
@@ -251,22 +258,27 @@ public class RoundCompleteHandler implements EventHandler {
   public void handle(final Event event) throws SQLException {
     final RoundComplete data = (RoundComplete) event.getData();
 
-    final long blackUid = getOrMakeBlack(data.getBlackCard());
-
-    boolean hasAnyNonStock = data.getBlackCard().isCustom();
+    // checking this at query-time is not feasible. do it up-front
+    boolean hasAnyCustomCards = data.getBlackCard().isCustom();
     // scan for any white cards that are custom or write in
     final Iterator<Entry<String, List<WhiteCardInfo>>> iter = data.getCardsByUserId().entrySet()
         .iterator();
-    while (!hasAnyNonStock && iter.hasNext()) {
+    while (!hasAnyCustomCards && iter.hasNext()) {
       final Entry<String, List<WhiteCardInfo>> entry = iter.next();
       final Iterator<WhiteCardInfo> cardIter = entry.getValue().iterator();
-      while (!hasAnyNonStock && cardIter.hasNext()) {
+      while (!hasAnyCustomCards && cardIter.hasNext()) {
         final WhiteCardInfo card = cardIter.next();
-        hasAnyNonStock |= card.isCustom() || card.isWriteIn();
+        hasAnyCustomCards |= card.isCustom() || card.isWriteIn();
       }
     }
+    if (hasAnyCustomCards && !includeCustomCards) {
+      LOG.debug(String.format("Round %s contains at least one custom card, skipping.",
+          data.getRoundId()));
+      return;
+    }
 
-    final long roundUid = getOrMakeRound(event, blackUid, hasAnyNonStock);
+    final long blackUid = getOrMakeBlack(data.getBlackCard());
+    final long roundUid = getOrMakeRound(event, blackUid, hasAnyCustomCards);
 
     // convert and store all of the white cards in one pass
     for (final Entry<String, List<WhiteCardInfo>> played : data.getCardsByUserId().entrySet()) {
