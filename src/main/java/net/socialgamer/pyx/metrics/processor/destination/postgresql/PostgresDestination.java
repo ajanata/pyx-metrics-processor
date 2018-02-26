@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017, Andy Janata
+ * Copyright (c) 2017-2018, Andy Janata
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -34,6 +34,7 @@ import org.apache.log4j.Logger;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import net.socialgamer.pyx.metrics.data.CardDealt;
 import net.socialgamer.pyx.metrics.data.Event;
 import net.socialgamer.pyx.metrics.data.EventData;
 import net.socialgamer.pyx.metrics.data.GameStart;
@@ -119,6 +120,7 @@ public class PostgresDestination implements Destination {
     handlers.put(UserConnect.class, new UserConnectHandler(connection));
     handlers.put(GameStart.class, new GameStartHandler(connection, includeCustomCards));
     handlers.put(RoundComplete.class, new RoundCompleteHandler(connection, includeCustomCards));
+    handlers.put(CardDealt.class, new CardDealtHandler(connection, includeCustomCards));
   }
 
   private synchronized void closeExistingHandlers() {

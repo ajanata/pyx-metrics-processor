@@ -2,10 +2,10 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.5.10
+-- Dumped from database version 9.6.7
 -- Dumped by pg_dump version 10.1
 
--- Started on 2018-01-24 09:54:58
+-- Started on 2018-02-25 21:51:31
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -16,10 +16,27 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET row_security = off;
 
+--
+-- TOC entry 1 (class 3079 OID 12427)
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 2318 (class 0 OID 0)
+-- Dependencies: 1
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
 SET search_path = public, pg_catalog;
 
 --
--- TOC entry 570 (class 1247 OID 17320)
+-- TOC entry 502 (class 1247 OID 17484)
 -- Name: browser; Type: TYPE; Schema: public; Owner: pyx
 --
 
@@ -34,7 +51,7 @@ CREATE TYPE browser AS (
 ALTER TYPE browser OWNER TO pyx;
 
 --
--- TOC entry 573 (class 1247 OID 17323)
+-- TOC entry 532 (class 1247 OID 17487)
 -- Name: geo; Type: TYPE; Schema: public; Owner: pyx
 --
 
@@ -50,7 +67,7 @@ CREATE TYPE geo AS (
 ALTER TYPE geo OWNER TO pyx;
 
 --
--- TOC entry 576 (class 1247 OID 17326)
+-- TOC entry 587 (class 1247 OID 17490)
 -- Name: pyx_metadata; Type: TYPE; Schema: public; Owner: pyx
 --
 
@@ -67,7 +84,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- TOC entry 184 (class 1259 OID 17327)
+-- TOC entry 188 (class 1259 OID 17491)
 -- Name: black_card; Type: TABLE; Schema: public; Owner: pyx
 --
 
@@ -84,7 +101,7 @@ CREATE TABLE black_card (
 ALTER TABLE black_card OWNER TO pyx;
 
 --
--- TOC entry 185 (class 1259 OID 17333)
+-- TOC entry 189 (class 1259 OID 17497)
 -- Name: black_card_uid_seq; Type: SEQUENCE; Schema: public; Owner: pyx
 --
 
@@ -99,8 +116,8 @@ CREATE SEQUENCE black_card_uid_seq
 ALTER TABLE black_card_uid_seq OWNER TO pyx;
 
 --
--- TOC entry 2281 (class 0 OID 0)
--- Dependencies: 185
+-- TOC entry 2319 (class 0 OID 0)
+-- Dependencies: 189
 -- Name: black_card_uid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: pyx
 --
 
@@ -108,7 +125,48 @@ ALTER SEQUENCE black_card_uid_seq OWNED BY black_card.uid;
 
 
 --
--- TOC entry 186 (class 1259 OID 17335)
+-- TOC entry 209 (class 1259 OID 17681)
+-- Name: card_dealt; Type: TABLE; Schema: public; Owner: pyx
+--
+
+CREATE TABLE card_dealt (
+    uid bigint NOT NULL,
+    game_id character varying(100) NOT NULL,
+    session_id character varying(100) NOT NULL,
+    white_card_uid bigint NOT NULL,
+    deal_seq bigint NOT NULL,
+    meta pyx_metadata NOT NULL
+);
+
+
+ALTER TABLE card_dealt OWNER TO pyx;
+
+--
+-- TOC entry 208 (class 1259 OID 17679)
+-- Name: card_dealt_uid_seq; Type: SEQUENCE; Schema: public; Owner: pyx
+--
+
+CREATE SEQUENCE card_dealt_uid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE card_dealt_uid_seq OWNER TO pyx;
+
+--
+-- TOC entry 2320 (class 0 OID 0)
+-- Dependencies: 208
+-- Name: card_dealt_uid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: pyx
+--
+
+ALTER SEQUENCE card_dealt_uid_seq OWNED BY card_dealt.uid;
+
+
+--
+-- TOC entry 190 (class 1259 OID 17499)
 -- Name: deck; Type: TABLE; Schema: public; Owner: pyx
 --
 
@@ -125,7 +183,7 @@ CREATE TABLE deck (
 ALTER TABLE deck OWNER TO pyx;
 
 --
--- TOC entry 187 (class 1259 OID 17341)
+-- TOC entry 191 (class 1259 OID 17505)
 -- Name: deck_uid_seq; Type: SEQUENCE; Schema: public; Owner: pyx
 --
 
@@ -140,8 +198,8 @@ CREATE SEQUENCE deck_uid_seq
 ALTER TABLE deck_uid_seq OWNER TO pyx;
 
 --
--- TOC entry 2283 (class 0 OID 0)
--- Dependencies: 187
+-- TOC entry 2321 (class 0 OID 0)
+-- Dependencies: 191
 -- Name: deck_uid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: pyx
 --
 
@@ -149,7 +207,7 @@ ALTER SEQUENCE deck_uid_seq OWNED BY deck.uid;
 
 
 --
--- TOC entry 188 (class 1259 OID 17343)
+-- TOC entry 192 (class 1259 OID 17507)
 -- Name: game_start; Type: TABLE; Schema: public; Owner: pyx
 --
 
@@ -167,7 +225,7 @@ CREATE TABLE game_start (
 ALTER TABLE game_start OWNER TO pyx;
 
 --
--- TOC entry 189 (class 1259 OID 17349)
+-- TOC entry 193 (class 1259 OID 17513)
 -- Name: game_start__deck; Type: TABLE; Schema: public; Owner: pyx
 --
 
@@ -181,7 +239,7 @@ CREATE TABLE game_start__deck (
 ALTER TABLE game_start__deck OWNER TO pyx;
 
 --
--- TOC entry 190 (class 1259 OID 17355)
+-- TOC entry 194 (class 1259 OID 17519)
 -- Name: game_start__deck_uid_seq; Type: SEQUENCE; Schema: public; Owner: pyx
 --
 
@@ -196,8 +254,8 @@ CREATE SEQUENCE game_start__deck_uid_seq
 ALTER TABLE game_start__deck_uid_seq OWNER TO pyx;
 
 --
--- TOC entry 2286 (class 0 OID 0)
--- Dependencies: 190
+-- TOC entry 2322 (class 0 OID 0)
+-- Dependencies: 194
 -- Name: game_start__deck_uid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: pyx
 --
 
@@ -205,7 +263,7 @@ ALTER SEQUENCE game_start__deck_uid_seq OWNED BY game_start__deck.uid;
 
 
 --
--- TOC entry 191 (class 1259 OID 17357)
+-- TOC entry 195 (class 1259 OID 17521)
 -- Name: game_start_uid_seq; Type: SEQUENCE; Schema: public; Owner: pyx
 --
 
@@ -220,8 +278,8 @@ CREATE SEQUENCE game_start_uid_seq
 ALTER TABLE game_start_uid_seq OWNER TO pyx;
 
 --
--- TOC entry 2287 (class 0 OID 0)
--- Dependencies: 191
+-- TOC entry 2323 (class 0 OID 0)
+-- Dependencies: 195
 -- Name: game_start_uid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: pyx
 --
 
@@ -229,7 +287,7 @@ ALTER SEQUENCE game_start_uid_seq OWNED BY game_start.uid;
 
 
 --
--- TOC entry 192 (class 1259 OID 17359)
+-- TOC entry 196 (class 1259 OID 17523)
 -- Name: round_complete; Type: TABLE; Schema: public; Owner: pyx
 --
 
@@ -248,8 +306,8 @@ CREATE TABLE round_complete (
 ALTER TABLE round_complete OWNER TO pyx;
 
 --
--- TOC entry 2288 (class 0 OID 0)
--- Dependencies: 192
+-- TOC entry 2324 (class 0 OID 0)
+-- Dependencies: 196
 -- Name: COLUMN round_complete.has_any_non_stock; Type: COMMENT; Schema: public; Owner: pyx
 --
 
@@ -257,7 +315,7 @@ COMMENT ON COLUMN round_complete.has_any_non_stock IS 'insert-time computation, 
 
 
 --
--- TOC entry 193 (class 1259 OID 17365)
+-- TOC entry 197 (class 1259 OID 17529)
 -- Name: round_complete__user_session__white_card; Type: TABLE; Schema: public; Owner: pyx
 --
 
@@ -273,7 +331,7 @@ CREATE TABLE round_complete__user_session__white_card (
 ALTER TABLE round_complete__user_session__white_card OWNER TO pyx;
 
 --
--- TOC entry 194 (class 1259 OID 17368)
+-- TOC entry 198 (class 1259 OID 17532)
 -- Name: round_complete__user_session__white_card_uid_seq; Type: SEQUENCE; Schema: public; Owner: pyx
 --
 
@@ -288,8 +346,8 @@ CREATE SEQUENCE round_complete__user_session__white_card_uid_seq
 ALTER TABLE round_complete__user_session__white_card_uid_seq OWNER TO pyx;
 
 --
--- TOC entry 2291 (class 0 OID 0)
--- Dependencies: 194
+-- TOC entry 2325 (class 0 OID 0)
+-- Dependencies: 198
 -- Name: round_complete__user_session__white_card_uid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: pyx
 --
 
@@ -297,7 +355,7 @@ ALTER SEQUENCE round_complete__user_session__white_card_uid_seq OWNED BY round_c
 
 
 --
--- TOC entry 195 (class 1259 OID 17370)
+-- TOC entry 199 (class 1259 OID 17534)
 -- Name: round_complete_uid_seq; Type: SEQUENCE; Schema: public; Owner: pyx
 --
 
@@ -312,8 +370,8 @@ CREATE SEQUENCE round_complete_uid_seq
 ALTER TABLE round_complete_uid_seq OWNER TO pyx;
 
 --
--- TOC entry 2292 (class 0 OID 0)
--- Dependencies: 195
+-- TOC entry 2326 (class 0 OID 0)
+-- Dependencies: 199
 -- Name: round_complete_uid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: pyx
 --
 
@@ -321,7 +379,7 @@ ALTER SEQUENCE round_complete_uid_seq OWNED BY round_complete.uid;
 
 
 --
--- TOC entry 196 (class 1259 OID 17372)
+-- TOC entry 200 (class 1259 OID 17536)
 -- Name: server_start; Type: TABLE; Schema: public; Owner: pyx
 --
 
@@ -335,7 +393,7 @@ CREATE TABLE server_start (
 ALTER TABLE server_start OWNER TO pyx;
 
 --
--- TOC entry 197 (class 1259 OID 17378)
+-- TOC entry 201 (class 1259 OID 17542)
 -- Name: server_start_uid_seq; Type: SEQUENCE; Schema: public; Owner: pyx
 --
 
@@ -350,8 +408,8 @@ CREATE SEQUENCE server_start_uid_seq
 ALTER TABLE server_start_uid_seq OWNER TO pyx;
 
 --
--- TOC entry 2294 (class 0 OID 0)
--- Dependencies: 197
+-- TOC entry 2327 (class 0 OID 0)
+-- Dependencies: 201
 -- Name: server_start_uid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: pyx
 --
 
@@ -359,7 +417,7 @@ ALTER SEQUENCE server_start_uid_seq OWNED BY server_start.uid;
 
 
 --
--- TOC entry 198 (class 1259 OID 17380)
+-- TOC entry 202 (class 1259 OID 17544)
 -- Name: user_session_uid_seq; Type: SEQUENCE; Schema: public; Owner: pyx
 --
 
@@ -374,7 +432,7 @@ CREATE SEQUENCE user_session_uid_seq
 ALTER TABLE user_session_uid_seq OWNER TO pyx;
 
 --
--- TOC entry 199 (class 1259 OID 17382)
+-- TOC entry 203 (class 1259 OID 17546)
 -- Name: user_session; Type: TABLE; Schema: public; Owner: pyx
 --
 
@@ -391,7 +449,7 @@ CREATE TABLE user_session (
 ALTER TABLE user_session OWNER TO pyx;
 
 --
--- TOC entry 200 (class 1259 OID 17389)
+-- TOC entry 204 (class 1259 OID 17553)
 -- Name: user_session_end_uid_seq; Type: SEQUENCE; Schema: public; Owner: pyx
 --
 
@@ -406,7 +464,7 @@ CREATE SEQUENCE user_session_end_uid_seq
 ALTER TABLE user_session_end_uid_seq OWNER TO pyx;
 
 --
--- TOC entry 201 (class 1259 OID 17391)
+-- TOC entry 205 (class 1259 OID 17555)
 -- Name: user_session_end; Type: TABLE; Schema: public; Owner: pyx
 --
 
@@ -420,7 +478,7 @@ CREATE TABLE user_session_end (
 ALTER TABLE user_session_end OWNER TO pyx;
 
 --
--- TOC entry 202 (class 1259 OID 17398)
+-- TOC entry 206 (class 1259 OID 17562)
 -- Name: white_card; Type: TABLE; Schema: public; Owner: pyx
 --
 
@@ -436,7 +494,7 @@ CREATE TABLE white_card (
 ALTER TABLE white_card OWNER TO pyx;
 
 --
--- TOC entry 203 (class 1259 OID 17404)
+-- TOC entry 207 (class 1259 OID 17568)
 -- Name: white_card_uid_seq; Type: SEQUENCE; Schema: public; Owner: pyx
 --
 
@@ -451,8 +509,8 @@ CREATE SEQUENCE white_card_uid_seq
 ALTER TABLE white_card_uid_seq OWNER TO pyx;
 
 --
--- TOC entry 2298 (class 0 OID 0)
--- Dependencies: 203
+-- TOC entry 2328 (class 0 OID 0)
+-- Dependencies: 207
 -- Name: white_card_uid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: pyx
 --
 
@@ -460,7 +518,7 @@ ALTER SEQUENCE white_card_uid_seq OWNED BY white_card.uid;
 
 
 --
--- TOC entry 2092 (class 2604 OID 17406)
+-- TOC entry 2121 (class 2604 OID 17570)
 -- Name: black_card uid; Type: DEFAULT; Schema: public; Owner: pyx
 --
 
@@ -468,7 +526,15 @@ ALTER TABLE ONLY black_card ALTER COLUMN uid SET DEFAULT nextval('black_card_uid
 
 
 --
--- TOC entry 2093 (class 2604 OID 17407)
+-- TOC entry 2131 (class 2604 OID 17684)
+-- Name: card_dealt uid; Type: DEFAULT; Schema: public; Owner: pyx
+--
+
+ALTER TABLE ONLY card_dealt ALTER COLUMN uid SET DEFAULT nextval('card_dealt_uid_seq'::regclass);
+
+
+--
+-- TOC entry 2122 (class 2604 OID 17571)
 -- Name: deck uid; Type: DEFAULT; Schema: public; Owner: pyx
 --
 
@@ -476,7 +542,7 @@ ALTER TABLE ONLY deck ALTER COLUMN uid SET DEFAULT nextval('deck_uid_seq'::regcl
 
 
 --
--- TOC entry 2094 (class 2604 OID 17408)
+-- TOC entry 2123 (class 2604 OID 17572)
 -- Name: game_start uid; Type: DEFAULT; Schema: public; Owner: pyx
 --
 
@@ -484,7 +550,7 @@ ALTER TABLE ONLY game_start ALTER COLUMN uid SET DEFAULT nextval('game_start_uid
 
 
 --
--- TOC entry 2095 (class 2604 OID 17409)
+-- TOC entry 2124 (class 2604 OID 17573)
 -- Name: game_start__deck uid; Type: DEFAULT; Schema: public; Owner: pyx
 --
 
@@ -492,7 +558,7 @@ ALTER TABLE ONLY game_start__deck ALTER COLUMN uid SET DEFAULT nextval('game_sta
 
 
 --
--- TOC entry 2096 (class 2604 OID 17410)
+-- TOC entry 2125 (class 2604 OID 17574)
 -- Name: round_complete uid; Type: DEFAULT; Schema: public; Owner: pyx
 --
 
@@ -500,7 +566,7 @@ ALTER TABLE ONLY round_complete ALTER COLUMN uid SET DEFAULT nextval('round_comp
 
 
 --
--- TOC entry 2097 (class 2604 OID 17411)
+-- TOC entry 2126 (class 2604 OID 17575)
 -- Name: round_complete__user_session__white_card uid; Type: DEFAULT; Schema: public; Owner: pyx
 --
 
@@ -508,7 +574,7 @@ ALTER TABLE ONLY round_complete__user_session__white_card ALTER COLUMN uid SET D
 
 
 --
--- TOC entry 2098 (class 2604 OID 17412)
+-- TOC entry 2127 (class 2604 OID 17576)
 -- Name: server_start uid; Type: DEFAULT; Schema: public; Owner: pyx
 --
 
@@ -516,7 +582,7 @@ ALTER TABLE ONLY server_start ALTER COLUMN uid SET DEFAULT nextval('server_start
 
 
 --
--- TOC entry 2101 (class 2604 OID 17413)
+-- TOC entry 2130 (class 2604 OID 17577)
 -- Name: white_card uid; Type: DEFAULT; Schema: public; Owner: pyx
 --
 
@@ -524,7 +590,7 @@ ALTER TABLE ONLY white_card ALTER COLUMN uid SET DEFAULT nextval('white_card_uid
 
 
 --
--- TOC entry 2105 (class 2606 OID 17415)
+-- TOC entry 2135 (class 2606 OID 17579)
 -- Name: black_card black_card_pkey; Type: CONSTRAINT; Schema: public; Owner: pyx
 --
 
@@ -533,16 +599,34 @@ ALTER TABLE ONLY black_card
 
 
 --
--- TOC entry 2107 (class 2606 OID 17417)
+-- TOC entry 2137 (class 2606 OID 17581)
 -- Name: black_card black_card_unique; Type: CONSTRAINT; Schema: public; Owner: pyx
 --
 
 ALTER TABLE ONLY black_card
-    ADD CONSTRAINT black_card_unique UNIQUE (text, is_custom, watermark, draw, pick);
+    ADD CONSTRAINT black_card_unique UNIQUE (text, is_custom, draw, pick);
 
 
 --
--- TOC entry 2109 (class 2606 OID 17419)
+-- TOC entry 2187 (class 2606 OID 17689)
+-- Name: card_dealt card_dealt_pkey; Type: CONSTRAINT; Schema: public; Owner: pyx
+--
+
+ALTER TABLE ONLY card_dealt
+    ADD CONSTRAINT card_dealt_pkey PRIMARY KEY (uid);
+
+
+--
+-- TOC entry 2189 (class 2606 OID 17691)
+-- Name: card_dealt card_dealt_unique; Type: CONSTRAINT; Schema: public; Owner: pyx
+--
+
+ALTER TABLE ONLY card_dealt
+    ADD CONSTRAINT card_dealt_unique UNIQUE (game_id, session_id, white_card_uid, deal_seq);
+
+
+--
+-- TOC entry 2139 (class 2606 OID 17583)
 -- Name: deck deck_pkey; Type: CONSTRAINT; Schema: public; Owner: pyx
 --
 
@@ -551,7 +635,7 @@ ALTER TABLE ONLY deck
 
 
 --
--- TOC entry 2111 (class 2606 OID 17421)
+-- TOC entry 2141 (class 2606 OID 17585)
 -- Name: deck deck_unique; Type: CONSTRAINT; Schema: public; Owner: pyx
 --
 
@@ -560,7 +644,7 @@ ALTER TABLE ONLY deck
 
 
 --
--- TOC entry 2143 (class 2606 OID 17423)
+-- TOC entry 2173 (class 2606 OID 17587)
 -- Name: user_session_end end_session_id_unique; Type: CONSTRAINT; Schema: public; Owner: pyx
 --
 
@@ -569,7 +653,7 @@ ALTER TABLE ONLY user_session_end
 
 
 --
--- TOC entry 2113 (class 2606 OID 17425)
+-- TOC entry 2143 (class 2606 OID 17589)
 -- Name: game_start game_id_unique; Type: CONSTRAINT; Schema: public; Owner: pyx
 --
 
@@ -578,7 +662,7 @@ ALTER TABLE ONLY game_start
 
 
 --
--- TOC entry 2118 (class 2606 OID 17427)
+-- TOC entry 2148 (class 2606 OID 17591)
 -- Name: game_start__deck game_start__deck_pkey; Type: CONSTRAINT; Schema: public; Owner: pyx
 --
 
@@ -587,7 +671,7 @@ ALTER TABLE ONLY game_start__deck
 
 
 --
--- TOC entry 2120 (class 2606 OID 17429)
+-- TOC entry 2150 (class 2606 OID 17593)
 -- Name: game_start__deck game_start__deck_unique; Type: CONSTRAINT; Schema: public; Owner: pyx
 --
 
@@ -596,7 +680,7 @@ ALTER TABLE ONLY game_start__deck
 
 
 --
--- TOC entry 2115 (class 2606 OID 17431)
+-- TOC entry 2145 (class 2606 OID 17595)
 -- Name: game_start game_start_pkey; Type: CONSTRAINT; Schema: public; Owner: pyx
 --
 
@@ -605,7 +689,7 @@ ALTER TABLE ONLY game_start
 
 
 --
--- TOC entry 2131 (class 2606 OID 17433)
+-- TOC entry 2161 (class 2606 OID 17597)
 -- Name: round_complete__user_session__white_card rc_us_wc_unique; Type: CONSTRAINT; Schema: public; Owner: pyx
 --
 
@@ -614,7 +698,7 @@ ALTER TABLE ONLY round_complete__user_session__white_card
 
 
 --
--- TOC entry 2133 (class 2606 OID 17435)
+-- TOC entry 2163 (class 2606 OID 17599)
 -- Name: round_complete__user_session__white_card round_complete__user_session__white_card_pkey; Type: CONSTRAINT; Schema: public; Owner: pyx
 --
 
@@ -623,7 +707,7 @@ ALTER TABLE ONLY round_complete__user_session__white_card
 
 
 --
--- TOC entry 2125 (class 2606 OID 17437)
+-- TOC entry 2155 (class 2606 OID 17601)
 -- Name: round_complete round_complete_pkey; Type: CONSTRAINT; Schema: public; Owner: pyx
 --
 
@@ -632,7 +716,7 @@ ALTER TABLE ONLY round_complete
 
 
 --
--- TOC entry 2127 (class 2606 OID 17439)
+-- TOC entry 2157 (class 2606 OID 17603)
 -- Name: round_complete round_id_unique; Type: CONSTRAINT; Schema: public; Owner: pyx
 --
 
@@ -641,7 +725,7 @@ ALTER TABLE ONLY round_complete
 
 
 --
--- TOC entry 2135 (class 2606 OID 17441)
+-- TOC entry 2165 (class 2606 OID 17605)
 -- Name: server_start server_start_pkey; Type: CONSTRAINT; Schema: public; Owner: pyx
 --
 
@@ -650,7 +734,7 @@ ALTER TABLE ONLY server_start
 
 
 --
--- TOC entry 2139 (class 2606 OID 17443)
+-- TOC entry 2169 (class 2606 OID 17607)
 -- Name: user_session session_id_unique; Type: CONSTRAINT; Schema: public; Owner: pyx
 --
 
@@ -659,7 +743,7 @@ ALTER TABLE ONLY user_session
 
 
 --
--- TOC entry 2137 (class 2606 OID 17445)
+-- TOC entry 2167 (class 2606 OID 17609)
 -- Name: server_start start_id_unique; Type: CONSTRAINT; Schema: public; Owner: pyx
 --
 
@@ -668,7 +752,7 @@ ALTER TABLE ONLY server_start
 
 
 --
--- TOC entry 2145 (class 2606 OID 17447)
+-- TOC entry 2175 (class 2606 OID 17611)
 -- Name: user_session_end user_session_end_pkey; Type: CONSTRAINT; Schema: public; Owner: pyx
 --
 
@@ -677,7 +761,7 @@ ALTER TABLE ONLY user_session_end
 
 
 --
--- TOC entry 2141 (class 2606 OID 17449)
+-- TOC entry 2171 (class 2606 OID 17613)
 -- Name: user_session user_session_pkey; Type: CONSTRAINT; Schema: public; Owner: pyx
 --
 
@@ -686,7 +770,7 @@ ALTER TABLE ONLY user_session
 
 
 --
--- TOC entry 2153 (class 2606 OID 17451)
+-- TOC entry 2183 (class 2606 OID 17615)
 -- Name: white_card white_card_pkey; Type: CONSTRAINT; Schema: public; Owner: pyx
 --
 
@@ -695,16 +779,16 @@ ALTER TABLE ONLY white_card
 
 
 --
--- TOC entry 2155 (class 2606 OID 17453)
+-- TOC entry 2185 (class 2606 OID 17617)
 -- Name: white_card white_card_unique; Type: CONSTRAINT; Schema: public; Owner: pyx
 --
 
 ALTER TABLE ONLY white_card
-    ADD CONSTRAINT white_card_unique UNIQUE (text, is_custom, is_write_in, watermark);
+    ADD CONSTRAINT white_card_unique UNIQUE (text, is_custom, is_write_in);
 
 
 --
--- TOC entry 2102 (class 1259 OID 17454)
+-- TOC entry 2132 (class 1259 OID 17618)
 -- Name: black_card_is_custom_idx; Type: INDEX; Schema: public; Owner: pyx
 --
 
@@ -712,7 +796,7 @@ CREATE INDEX black_card_is_custom_idx ON black_card USING btree (is_custom) WHER
 
 
 --
--- TOC entry 2103 (class 1259 OID 17455)
+-- TOC entry 2133 (class 1259 OID 17619)
 -- Name: black_card_is_not_custom_idx; Type: INDEX; Schema: public; Owner: pyx
 --
 
@@ -720,7 +804,7 @@ CREATE INDEX black_card_is_not_custom_idx ON black_card USING btree (is_custom) 
 
 
 --
--- TOC entry 2128 (class 1259 OID 17456)
+-- TOC entry 2158 (class 1259 OID 17620)
 -- Name: fki_rc_us_rc_white_card_uid; Type: INDEX; Schema: public; Owner: pyx
 --
 
@@ -728,7 +812,7 @@ CREATE INDEX fki_rc_us_rc_white_card_uid ON round_complete__user_session__white_
 
 
 --
--- TOC entry 2129 (class 1259 OID 17457)
+-- TOC entry 2159 (class 1259 OID 17621)
 -- Name: fki_rc_us_wc_round_complete_uid; Type: INDEX; Schema: public; Owner: pyx
 --
 
@@ -736,7 +820,7 @@ CREATE INDEX fki_rc_us_wc_round_complete_uid ON round_complete__user_session__wh
 
 
 --
--- TOC entry 2121 (class 1259 OID 17458)
+-- TOC entry 2151 (class 1259 OID 17622)
 -- Name: fki_round_complete_black_card_uid; Type: INDEX; Schema: public; Owner: pyx
 --
 
@@ -744,7 +828,7 @@ CREATE INDEX fki_round_complete_black_card_uid ON round_complete USING btree (bl
 
 
 --
--- TOC entry 2116 (class 1259 OID 17459)
+-- TOC entry 2146 (class 1259 OID 17623)
 -- Name: game_start__deck_game_id_idx; Type: INDEX; Schema: public; Owner: pyx
 --
 
@@ -752,7 +836,7 @@ CREATE INDEX game_start__deck_game_id_idx ON game_start__deck USING btree (game_
 
 
 --
--- TOC entry 2122 (class 1259 OID 17460)
+-- TOC entry 2152 (class 1259 OID 17624)
 -- Name: round_complete_has_any_non_stock_idx; Type: INDEX; Schema: public; Owner: pyx
 --
 
@@ -760,7 +844,7 @@ CREATE INDEX round_complete_has_any_non_stock_idx ON round_complete USING btree 
 
 
 --
--- TOC entry 2123 (class 1259 OID 17461)
+-- TOC entry 2153 (class 1259 OID 17625)
 -- Name: round_complete_is_only_stock_idx; Type: INDEX; Schema: public; Owner: pyx
 --
 
@@ -768,7 +852,7 @@ CREATE INDEX round_complete_is_only_stock_idx ON round_complete USING btree (has
 
 
 --
--- TOC entry 2146 (class 1259 OID 17462)
+-- TOC entry 2176 (class 1259 OID 17626)
 -- Name: white_card_is_custom_idx; Type: INDEX; Schema: public; Owner: pyx
 --
 
@@ -776,7 +860,7 @@ CREATE INDEX white_card_is_custom_idx ON white_card USING btree (is_custom) WHER
 
 
 --
--- TOC entry 2147 (class 1259 OID 17463)
+-- TOC entry 2177 (class 1259 OID 17627)
 -- Name: white_card_is_not_custom_idx; Type: INDEX; Schema: public; Owner: pyx
 --
 
@@ -784,7 +868,7 @@ CREATE INDEX white_card_is_not_custom_idx ON white_card USING btree (is_custom) 
 
 
 --
--- TOC entry 2148 (class 1259 OID 17464)
+-- TOC entry 2178 (class 1259 OID 17628)
 -- Name: white_card_is_not_stock_idx; Type: INDEX; Schema: public; Owner: pyx
 --
 
@@ -792,7 +876,7 @@ CREATE INDEX white_card_is_not_stock_idx ON white_card USING btree (uid) WHERE (
 
 
 --
--- TOC entry 2149 (class 1259 OID 17465)
+-- TOC entry 2179 (class 1259 OID 17629)
 -- Name: white_card_is_not_write_in_idx; Type: INDEX; Schema: public; Owner: pyx
 --
 
@@ -800,7 +884,7 @@ CREATE INDEX white_card_is_not_write_in_idx ON white_card USING btree (is_write_
 
 
 --
--- TOC entry 2150 (class 1259 OID 17466)
+-- TOC entry 2180 (class 1259 OID 17630)
 -- Name: white_card_is_stock_idx; Type: INDEX; Schema: public; Owner: pyx
 --
 
@@ -808,7 +892,7 @@ CREATE INDEX white_card_is_stock_idx ON white_card USING btree (uid) WHERE ((is_
 
 
 --
--- TOC entry 2151 (class 1259 OID 17467)
+-- TOC entry 2181 (class 1259 OID 17631)
 -- Name: white_card_is_write_in_idx; Type: INDEX; Schema: public; Owner: pyx
 --
 
@@ -816,7 +900,16 @@ CREATE INDEX white_card_is_write_in_idx ON white_card USING btree (is_write_in) 
 
 
 --
--- TOC entry 2156 (class 2606 OID 17468)
+-- TOC entry 2194 (class 2606 OID 17692)
+-- Name: card_dealt card_dealt__white_card_uid; Type: FK CONSTRAINT; Schema: public; Owner: pyx
+--
+
+ALTER TABLE ONLY card_dealt
+    ADD CONSTRAINT card_dealt__white_card_uid FOREIGN KEY (white_card_uid) REFERENCES white_card(uid);
+
+
+--
+-- TOC entry 2190 (class 2606 OID 17632)
 -- Name: game_start__deck game_start__deck__deck_uid; Type: FK CONSTRAINT; Schema: public; Owner: pyx
 --
 
@@ -825,7 +918,7 @@ ALTER TABLE ONLY game_start__deck
 
 
 --
--- TOC entry 2158 (class 2606 OID 17473)
+-- TOC entry 2192 (class 2606 OID 17637)
 -- Name: round_complete__user_session__white_card rc_us_rc_white_card_uid; Type: FK CONSTRAINT; Schema: public; Owner: pyx
 --
 
@@ -834,7 +927,7 @@ ALTER TABLE ONLY round_complete__user_session__white_card
 
 
 --
--- TOC entry 2159 (class 2606 OID 17478)
+-- TOC entry 2193 (class 2606 OID 17642)
 -- Name: round_complete__user_session__white_card rc_us_wc_round_complete_uid; Type: FK CONSTRAINT; Schema: public; Owner: pyx
 --
 
@@ -843,7 +936,7 @@ ALTER TABLE ONLY round_complete__user_session__white_card
 
 
 --
--- TOC entry 2157 (class 2606 OID 17483)
+-- TOC entry 2191 (class 2606 OID 17647)
 -- Name: round_complete round_complete_black_card_uid; Type: FK CONSTRAINT; Schema: public; Owner: pyx
 --
 
@@ -851,129 +944,7 @@ ALTER TABLE ONLY round_complete
     ADD CONSTRAINT round_complete_black_card_uid FOREIGN KEY (black_card_uid) REFERENCES black_card(uid);
 
 
---
--- TOC entry 2279 (class 0 OID 0)
--- Dependencies: 7
--- Name: public; Type: ACL; Schema: -; Owner: postgres
---
-
-REVOKE ALL ON SCHEMA public FROM PUBLIC;
-REVOKE ALL ON SCHEMA public FROM postgres;
-GRANT ALL ON SCHEMA public TO postgres;
-GRANT ALL ON SCHEMA public TO PUBLIC;
-
-
---
--- TOC entry 2280 (class 0 OID 0)
--- Dependencies: 184
--- Name: black_card; Type: ACL; Schema: public; Owner: pyx
---
-
-REVOKE ALL ON TABLE black_card FROM PUBLIC;
-REVOKE ALL ON TABLE black_card FROM pyx;
-GRANT ALL ON TABLE black_card TO pyx;
-
-
---
--- TOC entry 2282 (class 0 OID 0)
--- Dependencies: 186
--- Name: deck; Type: ACL; Schema: public; Owner: pyx
---
-
-REVOKE ALL ON TABLE deck FROM PUBLIC;
-REVOKE ALL ON TABLE deck FROM pyx;
-GRANT ALL ON TABLE deck TO pyx;
-
-
---
--- TOC entry 2284 (class 0 OID 0)
--- Dependencies: 188
--- Name: game_start; Type: ACL; Schema: public; Owner: pyx
---
-
-REVOKE ALL ON TABLE game_start FROM PUBLIC;
-REVOKE ALL ON TABLE game_start FROM pyx;
-GRANT ALL ON TABLE game_start TO pyx;
-
-
---
--- TOC entry 2285 (class 0 OID 0)
--- Dependencies: 189
--- Name: game_start__deck; Type: ACL; Schema: public; Owner: pyx
---
-
-REVOKE ALL ON TABLE game_start__deck FROM PUBLIC;
-REVOKE ALL ON TABLE game_start__deck FROM pyx;
-GRANT ALL ON TABLE game_start__deck TO pyx;
-
-
---
--- TOC entry 2289 (class 0 OID 0)
--- Dependencies: 192
--- Name: round_complete; Type: ACL; Schema: public; Owner: pyx
---
-
-REVOKE ALL ON TABLE round_complete FROM PUBLIC;
-REVOKE ALL ON TABLE round_complete FROM pyx;
-GRANT ALL ON TABLE round_complete TO pyx;
-
-
---
--- TOC entry 2290 (class 0 OID 0)
--- Dependencies: 193
--- Name: round_complete__user_session__white_card; Type: ACL; Schema: public; Owner: pyx
---
-
-REVOKE ALL ON TABLE round_complete__user_session__white_card FROM PUBLIC;
-REVOKE ALL ON TABLE round_complete__user_session__white_card FROM pyx;
-GRANT ALL ON TABLE round_complete__user_session__white_card TO pyx;
-
-
---
--- TOC entry 2293 (class 0 OID 0)
--- Dependencies: 196
--- Name: server_start; Type: ACL; Schema: public; Owner: pyx
---
-
-REVOKE ALL ON TABLE server_start FROM PUBLIC;
-REVOKE ALL ON TABLE server_start FROM pyx;
-GRANT ALL ON TABLE server_start TO pyx;
-
-
---
--- TOC entry 2295 (class 0 OID 0)
--- Dependencies: 199
--- Name: user_session; Type: ACL; Schema: public; Owner: pyx
---
-
-REVOKE ALL ON TABLE user_session FROM PUBLIC;
-REVOKE ALL ON TABLE user_session FROM pyx;
-GRANT ALL ON TABLE user_session TO pyx;
-
-
---
--- TOC entry 2296 (class 0 OID 0)
--- Dependencies: 201
--- Name: user_session_end; Type: ACL; Schema: public; Owner: pyx
---
-
-REVOKE ALL ON TABLE user_session_end FROM PUBLIC;
-REVOKE ALL ON TABLE user_session_end FROM pyx;
-GRANT ALL ON TABLE user_session_end TO pyx;
-
-
---
--- TOC entry 2297 (class 0 OID 0)
--- Dependencies: 202
--- Name: white_card; Type: ACL; Schema: public; Owner: pyx
---
-
-REVOKE ALL ON TABLE white_card FROM PUBLIC;
-REVOKE ALL ON TABLE white_card FROM pyx;
-GRANT ALL ON TABLE white_card TO pyx;
-
-
--- Completed on 2018-01-24 09:54:58
+-- Completed on 2018-02-25 21:51:31
 
 --
 -- PostgreSQL database dump complete

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017, Andy Janata
+ * Copyright (c) 2017-2018, Andy Janata
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -35,7 +35,7 @@ import java.util.Map.Entry;
 import net.socialgamer.pyx.metrics.data.Event;
 import net.socialgamer.pyx.metrics.data.RoundComplete;
 import net.socialgamer.pyx.metrics.data.RoundComplete.BlackCardInfo;
-import net.socialgamer.pyx.metrics.data.RoundComplete.WhiteCardInfo;
+import net.socialgamer.pyx.metrics.data.WhiteCardInfo;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;

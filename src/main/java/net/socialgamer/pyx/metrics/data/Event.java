@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017, Andy Janata
+ * Copyright (c) 2017-2018, Andy Janata
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -104,7 +104,7 @@ public class Event {
       final JsonNode dataObj = node.get("data");
 
       // TODO better
-      if (!"0.1".equals(version)) {
+      if (!"0.1".equals(version) && !"0.2".equals(version)) {
         ctxt.reportMappingException("Unknown event version " + version);
         return null;
       }
@@ -125,6 +125,9 @@ public class Event {
           break;
         case "roundComplete":
           data = mapper.readValue(dataObj.traverse(), RoundComplete.class);
+          break;
+        case "cardDealt":
+          data = mapper.readValue(dataObj.traverse(), CardDealt.class);
           break;
         default:
           ctxt.reportMappingException("Unknown event type " + type);

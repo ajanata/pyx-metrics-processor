@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017, Andy Janata
+ * Copyright (c) 2017-2018, Andy Janata
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -88,60 +88,6 @@ public class RoundComplete extends EventData {
     return String.format("%s[id=%s, round=%s, judge=%s, winner=%s, black=%s, whites=[%s]]",
         getClass().getSimpleName(), gameId, roundId, judgeSessionId, winnerSessionId, blackCard,
         cardsByUserId);
-  }
-
-  public static class WhiteCardInfo {
-    private boolean isCustom;
-    private boolean isWriteIn;
-    private int id;
-    private String watermark;
-    private String text;
-
-    public boolean isCustom() {
-      return isCustom;
-    }
-
-    public void setIsCustom(final boolean isCustom) {
-      this.isCustom = isCustom;
-    }
-
-    public boolean isWriteIn() {
-      return isWriteIn;
-    }
-
-    public void setIsWriteIn(final boolean isWriteIn) {
-      this.isWriteIn = isWriteIn;
-    }
-
-    public int getId() {
-      return id;
-    }
-
-    public void setId(final int id) {
-      this.id = id;
-    }
-
-    public String getWatermark() {
-      return watermark;
-    }
-
-    public void setWatermark(final String watermark) {
-      this.watermark = watermark;
-    }
-
-    public String getText() {
-      return text;
-    }
-
-    public void setText(final String text) {
-      this.text = text;
-    }
-
-    @Override
-    public String toString() {
-      return String.format("%s[id=%d, watermark=%s, text=%s, custom=%s, blank=%s]",
-          getClass().getSimpleName(), id, watermark, text, isCustom, isWriteIn);
-    }
   }
 
   public static class BlackCardInfo {
