@@ -131,6 +131,7 @@ public class CardDealtHandler implements EventHandler {
 
     if (!includeCustomCards && (card.isCustom() || card.isWriteIn())) {
       LOG.debug(String.format("Card %s is custom, skipping.", card));
+      return;
     }
 
     final long cardUid = getOrMakeWhite(card);
