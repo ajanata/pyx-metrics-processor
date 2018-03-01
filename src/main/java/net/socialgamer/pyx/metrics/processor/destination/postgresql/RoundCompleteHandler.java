@@ -32,13 +32,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+
 import net.socialgamer.pyx.metrics.data.Event;
 import net.socialgamer.pyx.metrics.data.RoundComplete;
 import net.socialgamer.pyx.metrics.data.RoundComplete.BlackCardInfo;
 import net.socialgamer.pyx.metrics.data.WhiteCardInfo;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 
 
 public class RoundCompleteHandler implements EventHandler {
@@ -57,13 +57,13 @@ public class RoundCompleteHandler implements EventHandler {
   public RoundCompleteHandler(final Connection connection, final boolean includeCustomCards)
       throws SQLException {
     getBlackStmt = connection.prepareStatement("SELECT uid FROM black_card"
-        + " WHERE text = ? AND is_custom = ? AND watermark = ? AND draw = ? AND pick = ?");
+        + " WHERE text = ? AND is_custom = ? AND draw = ? AND pick = ?");
     makeBlackStmt = connection.prepareStatement("INSERT INTO black_card"
         + " (text, is_custom, watermark, draw, pick)"
         + " VALUES (?, ?, ?, ?, ?)"
         + " ON CONFLICT DO NOTHING");
     getWhiteStmt = connection.prepareStatement("SELECT uid FROM white_card"
-        + " WHERE text = ? AND is_custom = ? AND is_write_in = ? AND watermark = ?");
+        + " WHERE text = ? AND is_custom = ? AND is_write_in = ?");
     makeWhiteStmt = connection.prepareStatement("INSERT INTO white_card"
         + " (text, is_custom, is_write_in, watermark)"
         + " VALUES (?, ?, ?, ?)"
@@ -111,9 +111,8 @@ public class RoundCompleteHandler implements EventHandler {
     getBlackStmt.clearParameters();
     getBlackStmt.setString(1, StringUtils.left(card.getText(), 1000));
     getBlackStmt.setBoolean(2, card.isCustom());
-    getBlackStmt.setString(3, StringUtils.left(notNull(card.getWatermark()), 20));
-    getBlackStmt.setInt(4, card.getDraw());
-    getBlackStmt.setInt(5, card.getPick());
+    getBlackStmt.setInt(3, card.getDraw());
+    getBlackStmt.setInt(4, card.getPick());
     try (ResultSet rs = getBlackStmt.executeQuery()) {
       if (rs.next()) {
         return rs.getLong(1);
@@ -160,7 +159,6 @@ public class RoundCompleteHandler implements EventHandler {
     getWhiteStmt.setString(1, StringUtils.left(card.getText(), 1000));
     getWhiteStmt.setBoolean(2, card.isCustom());
     getWhiteStmt.setBoolean(3, card.isWriteIn());
-    getWhiteStmt.setString(4, StringUtils.left(notNull(card.getWatermark()), 20));
     try (ResultSet rs = getWhiteStmt.executeQuery()) {
       if (rs.next()) {
         return rs.getLong(1);

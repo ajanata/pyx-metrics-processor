@@ -49,7 +49,7 @@ public class CardDealtHandler implements EventHandler {
   public CardDealtHandler(final Connection connection, final boolean includeCustomCards)
       throws SQLException {
     getWhiteStmt = connection.prepareStatement("SELECT uid FROM white_card"
-        + " WHERE text = ? AND is_custom = ? AND is_write_in = ? AND watermark = ?");
+        + " WHERE text = ? AND is_custom = ? AND is_write_in = ?");
     makeWhiteStmt = connection.prepareStatement("INSERT INTO white_card"
         + " (text, is_custom, is_write_in, watermark)"
         + " VALUES (?, ?, ?, ?)"
@@ -88,7 +88,6 @@ public class CardDealtHandler implements EventHandler {
     getWhiteStmt.setString(1, StringUtils.left(card.getText(), 1000));
     getWhiteStmt.setBoolean(2, card.isCustom());
     getWhiteStmt.setBoolean(3, card.isWriteIn());
-    getWhiteStmt.setString(4, StringUtils.left(notNull(card.getWatermark()), 20));
     try (ResultSet rs = getWhiteStmt.executeQuery()) {
       if (rs.next()) {
         return rs.getLong(1);
