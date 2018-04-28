@@ -950,3 +950,4 @@ ALTER TABLE ONLY round_complete
 -- PostgreSQL database dump complete
 --
 
+CREATE INDEX round_complete_game_id_idx ON round_complete USING btree (game_id);
