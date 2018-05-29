@@ -951,3 +951,7 @@ ALTER TABLE ONLY round_complete
 --
 
 CREATE INDEX round_complete_game_id_idx ON round_complete USING btree (game_id);
+
+CREATE INDEX round_complete__judge_session_id ON round_complete (judge_session_id);
+CREATE INDEX user_session__persistent_id ON user_session (persistent_id);
+
